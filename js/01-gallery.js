@@ -1,11 +1,9 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-console.log(galleryItems);
 const galleryWrapper = document.querySelector(`.gallery`);
 const previewImages = createGaleryImg(galleryItems);
 galleryWrapper.insertAdjacentHTML('beforeend', previewImages);
-let instance = null;
 
 function onClick(evt) {
   evt.preventDefault();
@@ -14,22 +12,29 @@ function onClick(evt) {
   if (previewImage.nodeName !== `IMG`) {
     return;
   }
-  console.log(previewImage.attributes[`data-source`]);
-  instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
     <div class="modal">
         <img src = "${previewImage.getAttribute(`data-source`)}"> 
     </div>
-    `);
+    `,
+    {
+      onShow: () => {
+        document.addEventListener(`keydown`, onEscapePress);
+      },
+      onClose: () => {
+        document.removeEventListener(`keydown`, onEscapePress);
+      },
+    }
+  );
+
+  const onEscapePress = (evt) => {
+    if (evt.key === 'Escape') {
+      instance.close();
+    }
+  };
 
   instance.show();
-}
-galleryWrapper.addEventListener(`keydown`, onEscapePress);
-
-function onEscapePress(evt) {
-  console.log(evt.key);
-  if (evt.key === 'Escape') {
-    instance.close();
-  }
 }
 
 function createGaleryImg(images) {
@@ -49,4 +54,4 @@ function createGaleryImg(images) {
     .join('');
 }
 
-galleryWrapper.addEventListener(`click`, onClick);
+document.addEventListener(`click`, onClick);
