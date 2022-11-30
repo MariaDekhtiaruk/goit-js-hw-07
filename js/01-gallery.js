@@ -54,4 +54,4 @@ function createGaleryImg(images) {
     .join('');
 }
 
-document.addEventListener(`click`, onClick);
+galleryWrapper.addEventListener(`click`, onClick);
